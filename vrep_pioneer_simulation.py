@@ -71,3 +71,15 @@ class VrepPioneerSimulation:
         """
         vrep.simxSetJointTargetVelocity(self.client_id, self.left_motor, self.gain*control[0], vrep.simx_opmode_oneshot_wait)
         vrep.simxSetJointTargetVelocity(self.client_id, self.right_motor, self.gain*control[1], vrep.simx_opmode_oneshot_wait)
+
+    def get_sensors_value():
+        """
+        Return the values of all the sensors in a list.
+
+        Return:
+            (list): the sensors values
+        """
+        #TODO
+
+        return NotImplementedError
+
