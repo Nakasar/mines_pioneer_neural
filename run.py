@@ -10,14 +10,14 @@ import threading
 robot = VrepPioneerSimulation()
 #robot = Pioneer(rospy)
 
-network = NN(3, 10, 2)
+network = NN(6, 10, 2)
 
 choice = input('Do you want to load previous network? (y/n) --> ')
 if choice == 'y':
     with open('last_w.json') as fp:
         json_obj = json.load(fp)
 
-    for i in range(3):
+    for i in range(6):
         for j in range(10):
             network.wi[i][j] = json_obj["input_weights"][i][j]
     for i in range(10):

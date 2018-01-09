@@ -19,15 +19,19 @@ class OnlineTrainer:
         self.robot = robot
         self.network = NN
 
-        self.alpha = [1/4,1/4,1/(math.pi)]
+        self.alpha = [1/4, 1/4, 1/(math.pi), 1/4, 1/4, 1/4]
 
     def train(self, target):
         position = self.robot.get_position()
+        sensors = self.robot.get_sensors_value()
 
-        network_input = [0, 0, 0]
+        network_input = [0] * 6
         network_input[0] = (position[0]-target[0])
         network_input[1] = (position[1]-target[1])
         network_input[2] = (position[2]-target[2])
+        network_input[3] = (sensors[0])
+        network_input[4] = (sensors[1])
+        network_input[5] = (sensors[2])
 
         while self.running:
             debut = time.time()
