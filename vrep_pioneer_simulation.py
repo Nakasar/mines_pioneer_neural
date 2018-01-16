@@ -19,6 +19,8 @@ class VrepPioneerSimulation:
         self.r = 0.096 # wheel radius
         self.R = 0.267 # demi-distance entre les r
 
+        self.activated_sensors = [1, 4, 5, 8]
+
         print('New pioneer simulation started')
         vrep.simxFinish(-1)
         self.client_id = vrep.simxStart(self.ip, self.port, True, True, 5000, 5)
@@ -29,9 +31,9 @@ class VrepPioneerSimulation:
             res, self.pioneer = vrep.simxGetObjectHandle(self.client_id, 'Pioneer_p3dx', vrep.simx_opmode_oneshot_wait)
             res, self.left_motor = vrep.simxGetObjectHandle(self.client_id, 'Pioneer_p3dx_leftMotor', vrep.simx_opmode_oneshot_wait)
             res, self.right_motor = vrep.simxGetObjectHandle(self.client_id, 'Pioneer_p3dx_rightMotor', vrep.simx_opmode_oneshot_wait)
-            self.proximity_sensors = ["" for i in range(0, 16)]
-            for i in range(1, 17):
-                res, self.proximity_sensors[i-1] = vrep.simxGetObjectHandle(self.client_id, 'Pioneer_p3dx_ultrasonicSensor' + str(i), vrep.simx_opmode_oneshot_wait)
+            self.proximity_sensors = [0 for i in range(len(self.activated_sensors))]
+            for i in range(len(self.activated_sensors)):
+                res, self.proximity_sensors[i] = vrep.simxGetObjectHandle(self.client_id, 'Pioneer_p3dx_ultrasonicSensor' + str(self.activated_sensors[i]), vrep.simx_opmode_oneshot_wait)
 
             self.set_position(self.initial_position)
             vrep.simxStartSimulation(self.client_id, vrep.simx_opmode_oneshot_wait)
@@ -81,7 +83,7 @@ class VrepPioneerSimulation:
 
         active sensors : 0, 3, 4, 7 (1,4,5,8), in front of robot.
         """
-        values = ["" for i in range(len(self.proximity_sensors))];
+        values = [0 for i in range(len(self.proximity_sensors))];
         for sensor in range(len(self.proximity_sensors)):
             values[sensor] = self.load_proximity_sensor(sensor)
         return values
@@ -98,7 +100,7 @@ class VrepPioneerSimulation:
         """Get values for all proximity sensors.
 
         """
-        values = ["" for i in range(len(self.proximity_sensors))];
+        values = [0 for i in range(len(self.proximity_sensors))];
         for sensor in range(len(self.proximity_sensors)):
             values[sensor] = self.get_proximity_sensor(sensor)
         return values
@@ -114,8 +116,18 @@ class VrepPioneerSimulation:
     def get_sensors_distances(self):
         """ Returns the distances of all the sensors in a list.
 
-        Return:
-            (list); the sensors distances.
-        """
+        Args:
+            (list): sensors to get distance of.
 
-        return NotImplementedError
+        Return:
+            (list): the sensors distances.
+        """
+        sensors_values = self.get_proximity_sensors()
+
+        distances = []
+        for value in sensors_values :
+            vector = value[2]
+            distance = math.sqrt(vector[0] ** 2 + vector[1] ** 2 + vector[2] ** 2)
+            distances.append(distance)
+
+        return distances

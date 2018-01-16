@@ -23,7 +23,7 @@ class OnlineTrainer:
 
     def train(self, target):
         position = self.robot.get_position()
-        sensors = self.robot.get_sensors_value()
+        sensors = self.robot.get_sensors_distances();
 
         network_input = [0] * 6
         network_input[0] = (position[0]-target[0])
@@ -45,7 +45,7 @@ class OnlineTrainer:
             network_input[1] = (position[1]-target[1])*self.alpha[1]
             network_input[0] = (position[0]-target[0])*self.alpha[0]
 
-
+            sensors = self.robot.get_sensors_distances();
             if self.training:
                 delta_t = (time.time()-debut)
                 # TODO: Modify grad for proper retro-propagation
