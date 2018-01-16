@@ -118,4 +118,4 @@ class VrepPioneerSimulation:
             (list); the sensors distances.
         """
 
-        return NotImplementedError
+        raise NotImplementedError()
