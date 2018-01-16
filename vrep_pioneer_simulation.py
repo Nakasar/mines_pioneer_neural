@@ -110,3 +110,12 @@ class VrepPioneerSimulation:
             sensor(int): the index of the sensor to get value of.
         """
         return vrep.simxReadProximitySensor(self.client_id, self.proximity_sensors[sensor], vrep.simx_opmode_buffer);
+
+    def get_sensors_distances(self):
+        """ Returns the distances of all the sensors in a list.
+
+        Return:
+            (list); the sensors distances.
+        """
+
+        return NotImplementedError
