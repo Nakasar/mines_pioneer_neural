@@ -29,9 +29,13 @@ class VrepPioneerSimulation:
             res, self.pioneer = vrep.simxGetObjectHandle(self.client_id, 'Pioneer_p3dx', vrep.simx_opmode_oneshot_wait)
             res, self.left_motor = vrep.simxGetObjectHandle(self.client_id, 'Pioneer_p3dx_leftMotor', vrep.simx_opmode_oneshot_wait)
             res, self.right_motor = vrep.simxGetObjectHandle(self.client_id, 'Pioneer_p3dx_rightMotor', vrep.simx_opmode_oneshot_wait)
+            self.proximity_sensors = ["" for i in range(0, 16)]
+            for i in range(1, 17):
+                res, self.proximity_sensors[i-1] = vrep.simxGetObjectHandle(self.client_id, 'Pioneer_p3dx_ultrasonicSensor' + str(i), vrep.simx_opmode_oneshot_wait)
 
             self.set_position(self.initial_position)
             vrep.simxStartSimulation(self.client_id, vrep.simx_opmode_oneshot_wait)
+            firt_load_of_sensors = self.load_proximity_sensors()
 
         else:
             print('Unable to connect to %s:%s' % (self.ip, self.port))
@@ -71,3 +75,38 @@ class VrepPioneerSimulation:
         """
         vrep.simxSetJointTargetVelocity(self.client_id, self.left_motor, self.gain*control[0], vrep.simx_opmode_oneshot_wait)
         vrep.simxSetJointTargetVelocity(self.client_id, self.right_motor, self.gain*control[1], vrep.simx_opmode_oneshot_wait)
+
+    def load_proximity_sensors(self):
+        """First call to initiate proximity sensors.
+
+        active sensors : 0, 3, 4, 7 (1,4,5,8), in front of robot.
+        """
+        values = ["" for i in range(len(self.proximity_sensors))];
+        for sensor in range(len(self.proximity_sensors)):
+            values[sensor] = self.load_proximity_sensor(sensor)
+        return values
+
+    def load_proximity_sensor(self, sensor):
+        """First call to initiate given proximity sensor.
+
+        Args:
+            sensor(int): the index of the sensor to load.
+        """
+        return vrep.simxReadProximitySensor(self.client_id, self.proximity_sensors[sensor], vrep.simx_opmode_streaming);
+
+    def get_proximity_sensors(self):
+        """Get values for all proximity sensors.
+
+        """
+        values = ["" for i in range(len(self.proximity_sensors))];
+        for sensor in range(len(self.proximity_sensors)):
+            values[sensor] = self.get_proximity_sensor(sensor)
+        return values
+
+    def get_proximity_sensor(self, sensor):
+        """Get value of given proximity sensor.
+
+        Args:
+            sensor(int): the index of the sensor to get value of.
+        """
+        return vrep.simxReadProximitySensor(self.client_id, self.proximity_sensors[sensor], vrep.simx_opmode_buffer);
