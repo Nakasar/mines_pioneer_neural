@@ -19,7 +19,7 @@ class OnlineTrainer:
         self.robot = robot
         self.network = NN
 
-        self.alpha = [1/4, 1/4, 1/(math.pi), 1/4, 1/4, 1/4]
+        self.alpha = [1/4, 1/4, 1/(math.pi), 1/4, 1/4, 1/4, 1/4]
 
     def train(self, target):
         position = self.robot.get_position()
@@ -32,6 +32,7 @@ class OnlineTrainer:
         network_input[3] = (sensors[0])
         network_input[4] = (sensors[1])
         network_input[5] = (sensors[2])
+        network_input[6] = (sensors[3])
 
         while self.running:
             debut = time.time()
@@ -45,7 +46,7 @@ class OnlineTrainer:
 
             if self.training:
                 delta_t = (time.time()-debut)
-
+                # TODO: Modify grad for proper retro-propagation
                 grad = [
                     ((-1)/(delta_t**2))*(network_input[0]*delta_t*self.robot.r*math.cos(position[2])
                     +network_input[1]*delta_t*self.robot.r*math.sin(position[2])
