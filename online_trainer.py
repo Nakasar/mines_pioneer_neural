@@ -23,9 +23,9 @@ class OnlineTrainer:
 
     def train(self, target):
         position = self.robot.get_position()
-        sensors = self.robot.get_sensors_value()
+        sensors = self.robot.get_sensors_distance()
 
-        network_input = [0] * 6
+        network_input = [0] * 7
         network_input[0] = (position[0]-target[0])
         network_input[1] = (position[1]-target[1])
         network_input[2] = (position[2]-target[2])
@@ -40,10 +40,14 @@ class OnlineTrainer:
             self.robot.set_motor_velocity(command)
             time.sleep(0.050)
             position = self.robot.get_position()
+            sensors = self.robot.get_sensors_distance()
             network_input[2]=(position[2]-target[2]-theta_s(position[0], position[1]))*self.alpha[2]
             network_input[1] = (position[1]-target[1])*self.alpha[1]
             network_input[0] = (position[0]-target[0])*self.alpha[0]
-
+            network_input[3] = (sensors[0]) * self.alpha[3]
+            network_input[4] = (sensors[1]) * self.alpha[4]
+            network_input[5] = (sensors[2]) * self.alpha[5]
+            network_input[6] = (sensors[3]) * self.alpha[6]
             if self.training:
                 delta_t = (time.time()-debut)
                 # TODO: Modify grad for proper retro-propagation
