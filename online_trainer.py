@@ -19,20 +19,19 @@ class OnlineTrainer:
         self.robot = robot
         self.network = NN
 
-        self.alpha = [1/4, 1/4, 1/(math.pi), 1/4, 1/4, 1/4, 1/4]
+        self.alpha = [1/4, 1/4, 1/(math.pi)]
+        self.sensor_alpha = 1/4
 
     def train(self, target):
         position = self.robot.get_position()
         sensors = self.robot.get_sensors_distances();
 
-        network_input = [0] * 7
+        network_input = [0] * 11
         network_input[0] = (position[0]-target[0])
         network_input[1] = (position[1]-target[1])
         network_input[2] = (position[2]-target[2])
-        network_input[3] = (sensors[0])
-        network_input[4] = (sensors[1])
-        network_input[5] = (sensors[2])
-        network_input[6] = (sensors[3])
+        for i in range(len(sensors)) :
+            network_input[i+3] = sensors[i] * 1
 
         while self.running:
             debut = time.time()
@@ -42,13 +41,12 @@ class OnlineTrainer:
             time.sleep(0.050)
             position = self.robot.get_position()
             sensors = self.robot.get_sensors_distances()
+
             network_input[2]=(position[2]-target[2]-theta_s(position[0], position[1]))*self.alpha[2]
             network_input[1] = (position[1]-target[1])*self.alpha[1]
             network_input[0] = (position[0]-target[0])*self.alpha[0]
-            network_input[3] = (sensors[0]) * self.alpha[3]
-            network_input[4] = (sensors[1]) * self.alpha[4]
-            network_input[5] = (sensors[2]) * self.alpha[5]
-            network_input[6] = (sensors[3]) * self.alpha[6]
+            for i in range(len(sensors)) :
+                network_input[i+3] = sensors[i] * self.sensor_alpha
 
             if self.training:
                 delta_t = (time.time()-debut)

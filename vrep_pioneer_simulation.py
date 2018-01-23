@@ -19,7 +19,7 @@ class VrepPioneerSimulation:
         self.r = 0.096 # wheel radius
         self.R = 0.267 # demi-distance entre les r
 
-        self.activated_sensors = [1, 4, 5, 8]
+        self.activated_sensors = [1, 4, 5, 8, 9, 12, 13, 16]
 
         print('New pioneer simulation started')
         vrep.simxFinish(-1)
@@ -124,10 +124,16 @@ class VrepPioneerSimulation:
         """
         sensors_values = self.get_proximity_sensors()
 
-        distances = []
+        invert_distances = []
         for value in sensors_values :
             vector = value[2]
             distance = math.sqrt(vector[0] ** 2 + vector[1] ** 2 + vector[2] ** 2)
-            distances.append(distance)
+            if (value[1]) :
+                if (distance == 0) :
+                    invert_distances.append(100)
+                else :
+                    invert_distances.append(1 / distance)
+            else :
+                invert_distances.append(0)
 
-        return distances
+        return invert_distances

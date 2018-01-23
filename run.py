@@ -10,7 +10,7 @@ import threading
 robot = VrepPioneerSimulation()
 #robot = Pioneer(rospy)
 
-network = NN(7, 10, 2)
+network = NN(11, 10, 2)
 
 choice = input('Do you want to load previous network? (y/n) --> ')
 if choice == 'y':
