@@ -50,15 +50,33 @@ class OnlineTrainer:
 
             if self.training:
                 delta_t = (time.time()-debut)
+                sensors_influence_rd = 0
+                sensors_influence_rg = 0
+                # ce dictionnaire contient les angles des capteurs (utile pour obtenir leur influence)
+                sensors_angle = {0: -math.pi / 6, 1: -math.pi/3, 2: -2*math.pi/3, 3: -5*math.pi/6, 4: 5*math.pi/6, 5: 2*math.pi/3, 6: math.pi/3, 7: math.pi/6}
                 # TODO: Modify grad for proper retro-propagation
+                for k in range(len(sensors)):
+                    offset = network_input[3 + k] * delta_t * self.robot.r / self.robot.R
+                    if k == 0 or k == 7:
+                        vects = [1, -1]
+                    elif k == 1 or k == 2:
+                        vects = [1, 1]
+                    elif k == 3 or k == 4:
+                        vects = [-1, 1]
+                    else:
+                        vects = [-1, -1]
+                    sensors_influence_rd += vects[0] * offset
+                    sensors_influence_rg += vects[1] * offset
                 grad = [
                     ((-1)/(delta_t**2))*(network_input[0]*delta_t*self.robot.r*math.cos(position[2])
                     +network_input[1]*delta_t*self.robot.r*math.sin(position[2])
-                    -network_input[2]*delta_t*self.robot.r/(2*self.robot.R)),
+                    -network_input[2]*delta_t*self.robot.r/(2*self.robot.R))
+                    +sensors_influence_rg,
 
                     ((-1)/(delta_t**2))*(network_input[0]*delta_t*self.robot.r*math.cos(position[2])
                     +network_input[1]*delta_t*self.robot.r*math.sin(position[2])
                     +network_input[2]*delta_t*self.robot.r/(2*self.robot.R))
+                    +sensors_influence_rd
                 ]
 
                 # The two args after grad are the gradient learning steps for t
