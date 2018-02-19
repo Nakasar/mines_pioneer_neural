@@ -67,6 +67,7 @@ class OnlineTrainer:
                         vects = [-1, -1]
                     sensors_influence_rd += vects[0] * offset
                     sensors_influence_rg += vects[1] * offset
+
                 grad = [
                     ((-1)/(delta_t**2))*(network_input[0]*delta_t*self.robot.r*math.cos(position[2])
                     +network_input[1]*delta_t*self.robot.r*math.sin(position[2])
