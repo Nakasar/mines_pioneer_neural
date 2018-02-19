@@ -72,12 +72,12 @@ class OnlineTrainer:
                     ((-1)/(delta_t**2))*(network_input[0]*delta_t*self.robot.r*math.cos(position[2])
                     +network_input[1]*delta_t*self.robot.r*math.sin(position[2])
                     -network_input[2]*delta_t*self.robot.r/(2*self.robot.R))
-                    +sensors_influence_rg,
+                    -sensors_influence_rg,
 
                     ((-1)/(delta_t**2))*(network_input[0]*delta_t*self.robot.r*math.cos(position[2])
                     +network_input[1]*delta_t*self.robot.r*math.sin(position[2])
                     +network_input[2]*delta_t*self.robot.r/(2*self.robot.R))
-                    +sensors_influence_rd
+                    -sensors_influence_rd
                 ]
 
                 # The two args after grad are the gradient learning steps for t

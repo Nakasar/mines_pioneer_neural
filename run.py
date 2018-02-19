@@ -39,7 +39,7 @@ else:
 trainer = OnlineTrainer(robot, network)
 
 choice = ''
-while choice!='y' and choice !='n':
+while choice != 'y' and choice != 'n':
     choice = input('Do you want to learn? (y/n) --> ')
 
 if choice == 'y':
@@ -47,11 +47,18 @@ if choice == 'y':
 elif choice == 'n':
     trainer.training = False
 
-target = input("Enter the first target : x y radian --> ")
-target = target.split()
-for i in range(len(target)):
-    target[i] = float(target[i])
-print('New target : [%d, %d, %d]'%(target[0], target[1], target[2]))
+ask = True
+while ask :
+    try :
+        target = input("Enter the first target : x y radian --> ")
+        target = target.split()
+        for i in range(len(target)):
+            target[i] = float(target[i])
+
+        print('New target : [%d, %d, %d]'%(target[0], target[1], target[2]))
+        ask = False
+    except ValueError :
+        ask = True
 
 continue_running = True
 while(continue_running):
